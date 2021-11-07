@@ -395,7 +395,7 @@ public class charms : MonoBehaviour
             return;
         var left = Array.IndexOf(submitButtons, button) == 0;
         Debug.LogFormat("[Charms #{0}] Submitted {1} sliding puzzle: {2}.", moduleId, left ? "left" : "right", (left ? leftConfiguration : rightConfiguration).Select(x => x == null ? "empty" : colorNames[(int)x]).Join(", "));
-        if ((left ? leftConfiguration.SequenceEqual(leftSolution) : rightConfiguration.SequenceEqual(rightSolution)) || Application.isEditor || true) //> REMOVE THE TRUE
+        if ((left ? leftConfiguration.SequenceEqual(leftSolution) : rightConfiguration.SequenceEqual(rightSolution)) || Application.isEditor)
         {
             puzzlesSolved[left ? 0 : 1] = true;
             StartCoroutine(FadeSubmitButton(submitButtons[left ? 0 : 1].GetComponent<Renderer>()));
