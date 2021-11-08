@@ -506,19 +506,103 @@ public class charms : MonoBehaviour
         return orbs.Skip(4 * ix).Take(4).ToArray();
     }
 
-    /*
+    
     // Twitch Plays
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = "!{0} <left/right> 1 2 3 [Presses those tiles in reading order on the right or left sliding puzzle, any amount can be used] !{0} <left/right> submit [Presses the left or right diamond button] !{0} <#> <U/UR/DL/D/DR/UR> [Casts a spell by starting on the #th hexagon according to the manual, then moving in those directions]";
+    private readonly string TwitchHelpMessage = "!{0} <left/right> 1 2 3 [Presses those tiles in reading order on the right or left sliding puzzle, any amount can be used] !{0} <left/right> submit [Presses the left or right diamond button] !{0} cast 1 2 3 4 [Casts a spell by starting on hexagon 1 and moving to the rest in order]";
 #pragma warning restore 414
 
     private IEnumerator ProcessTwitchCommand(string input)
     {
+        input = input.Trim().ToLowerInvariant();
+        var inputArray = input.Split(' ').ToArray();
+        if (input == "left submit")
+        {
+            if (puzzlesSolved[0])
+            {
+                yield return "sendtochaterror The left puzzle is already solved.";
+                yield break;
+            }
+            yield return null;
+            submitButtons[0].OnInteract();
+        }
+        else if (input == "right submit")
+        {
+            if (puzzlesSolved[1])
+            {
+                yield return "sendtochaterror The right puzzle is already solved.";
+                yield break;
+            }
+            yield return null;
+            submitButtons[1].OnInteract();
+        }
+        else if (input.StartsWith("left ") && input.Substring(5).Split(' ').All(x => "123456".Contains(x)))
+        {
+            if (puzzlesSolved[0])
+            {
+                yield return "sendtochaterror The left puzzle is already solved.";
+                yield break;
+            }
+            yield return null;
+            var numbers = input.Substring(5).Split(' ').ToArray();
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                var thisTile = leftConfiguration[int.Parse(numbers[i]) - 1];
+                if (thisTile == null)
+                {
+                    yield return "sendtochaterror You cannot press the blank space.";
+                    yield break;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(.1f);
+                    leftTiles[(int)leftConfiguration[int.Parse(numbers[i]) - 1]].OnInteract();
+                }
+            }
+        }
+        else if (input.StartsWith("right ") && input.Substring(6).Split(' ').All(x => "123456".Contains(x)))
+        {
+            if (puzzlesSolved[1])
+            {
+                yield return "sendtochaterror The right puzzle is already solved.";
+                yield break;
+            }
+            yield return null;
+            var numbers = input.Substring(6).Split(' ').ToArray();
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                var thisTile = rightConfiguration[int.Parse(numbers[i]) - 1];
+                if (thisTile == null)
+                {
+                    yield return "sendtochaterror You cannot press the blank space.";
+                    yield break;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(.1f);
+                    rightTiles[(int)rightConfiguration[int.Parse(numbers[i]) - 1]].OnInteract();
+                }
+            }
+        }
+        else if (input.StartsWith("cast ") && input.Substring(5).Split(' ').All(x => "1234567".Contains(x)))
+        {
+            if (!ableToCast || castingInProgress)
+            {
+                yield return "sendtochaterror Hold your horses.";
+                yield break;
+            }
+            var numbers = input.Substring(5).Split(' ').Select(x => int.Parse(x) - 1).ToArray();
+            yield return null;
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                yield return new WaitForSeconds(.1f);
+                if (i == 0)
+                    castingHexagons[numbers[i]].OnInteract();
+                else
+                    castingHexagons[numbers[i]].OnHighlight();
+            }
+            yield return new WaitForSeconds(.1f);
+            castingHexagons[numbers[0]].OnInteractEnded();
+        }
     }
-
-    private IEnumerator TwitchHandleForcedSolve()
-    {
-        yield return null;
-    }
-    */
 }
