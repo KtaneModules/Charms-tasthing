@@ -46,7 +46,7 @@ public class charms : MonoBehaviour
     private static readonly string laCroixTorus = "PYPPPBGGGBPRRGGRRRYBRBRRGRPYYRRBYYGPPYBGRBBYYPBBBGYPPPBGGRRGYPGBBYGGRGYGGBRYPPRYPGRRRYYPPBPYYYPBBBGB";
     private static readonly string[] positionConversions = new string[] { "AGPU38", "DHMX29", "BIQS16", "EJNV07", "CKRWZ4", "FLOTY5" };
     private static readonly string[] spellColors = new string[] { "RR", "RY", "RG", "RB", "RP", "YR", "YY", "YG", "YB", "YP", "GR", "GY", "GG", "GB", "GP", "BR", "BY", "BG", "BB", "BP", "PR", "PY", "PG", "PB", "PP" };
-    private static readonly string[] spellNames = new string[] { "Conformare Series", "Vestigium Ostendere", "Apage", "Aenigma Insulsus", "Fortis Facini", "Id Isea", "Arierae Factura", "Fulices Terreat", "Abrogo", "Pomi Ambrosia", "Urbs Cruminis", "Pincerna", "Mortuous Defendisse", "Incurrere Machinationes", "Elutorium", "Pluviarum Versicolorium", "Tessellam Adcessio", "Refocillatrix", "Sicut Pater", "Vendicare Compositum", "Speculi Expiatio", "Praestigiator Fabarum", "Silentium Coeli", "Daedalae Orbitae", "Vastator Metallis Tesquorum" };
+    private static readonly string[] spellNames = new string[] { "Conformare Series", "Vestigium Ostendere", "Apage", "Aenigma Insulsus", "Fortis Facini", "Id Isea", "Arierae Factura", "Fulices Terreat", "Abrogo", "Pomi Ambrosia", "Urbs Cruminis", "Pincerna", "Mortuos Defendisse", "Incurrere Machinationes", "Elutorium", "Pluviarum Versicolorium", "Tessellam Adcessio", "Refocillatrix", "Sicut Pater", "Vendicare Compositum", "Speculi Expiatio", "Praestigiator Fabarum", "Silentium Coeli", "Daedalae Orbitae", "Vastator Metallis Tesquorum" };
     private static readonly List<int>[] spellPatterns = new List<int>[]
     {
         new List<int> { 5, 7, 6, 3, 1, 2 },
@@ -515,7 +515,6 @@ public class charms : MonoBehaviour
     private IEnumerator ProcessTwitchCommand(string input)
     {
         input = input.Trim().ToLowerInvariant();
-        var inputArray = input.Split(' ').ToArray();
         if (input == "left submit")
         {
             if (puzzlesSolved[0])
