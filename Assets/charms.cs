@@ -22,6 +22,7 @@ public class charms : MonoBehaviour
     private Renderer[] rightTileRenders;
     public Renderer[] orbs;
     public Renderer[] stageLeds;
+    public Light[] lights;
     public TextMesh[] colorblindTexts;
     public Transform[] arrows;
     public Color lightGray;
@@ -150,7 +151,8 @@ public class charms : MonoBehaviour
                 {
                     Debug.LogFormat("[Charms #{0}] That was correct.", moduleId);
                     StartCoroutine(LiterallyJustAnInteractionPunch());
-                    ledCycleAnimations[stage] = StartCoroutine(CycleLed(stageLeds[stage], colorStringsUsed[stage]));
+                    lights[stage].enabled = true;
+                    ledCycleAnimations[stage] = StartCoroutine(CycleLed(stageLeds[stage], lights[stage], colorStringsUsed[stage]));
                     audio.PlaySoundAtTransform("spell-" + colorStringsUsed[stage][0], transform);
                     stage++;
                     if (stage == 3)
@@ -183,6 +185,12 @@ public class charms : MonoBehaviour
 
     private void Start()
     {
+        var scalar = transform.lossyScale.x;
+        foreach (Light light in lights)
+        {
+            light.range *= scalar;
+            light.enabled = false;
+        }
         for (int i = 0; i < 2; i++)
         {
             directions[i] = rnd.Range(0, 4);
@@ -417,7 +425,7 @@ public class charms : MonoBehaviour
         }
     }
 
-    private IEnumerator CycleLed(Renderer led, string colorString)
+    private IEnumerator CycleLed(Renderer led, Light light, string colorString)
     {
     restartCycle:
         for (int i = 0; i < 2; i++)
@@ -429,10 +437,12 @@ public class charms : MonoBehaviour
             while (elapsed < duration)
             {
                 led.material.color = Color.Lerp(startingColor, endingColor, elapsed / duration);
+                light.color = Color.Lerp(startingColor, endingColor, elapsed / duration);
                 yield return null;
                 elapsed += Time.deltaTime;
             }
             led.material.color = endingColor;
+            light.color = endingColor;
         }
         goto restartCycle;
     }
@@ -506,7 +516,7 @@ public class charms : MonoBehaviour
         return orbs.Skip(4 * ix).Take(4).ToArray();
     }
 
-    
+
     // Twitch Plays
 #pragma warning disable 414
     private readonly string TwitchHelpMessage = "!{0} <left/right> 1 2 3 [Presses those tiles in reading order on the right or left sliding puzzle, any amount can be used] !{0} <left/right> submit [Presses the left or right diamond button] !{0} cast 1 2 3 4 [Casts a spell by starting on hexagon 1 and moving to the rest in order]";
