@@ -89,9 +89,39 @@ public class charms : MonoBehaviour
     private int moduleId;
     private bool moduleSolved;
 
+    #region ModSettings
+    charmsSettings settings = new charmsSettings();
+#pragma warning disable 414
+    private static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
+    {
+      new Dictionary<string, object>
+      {
+        { "Filename", "Charms Settings.json"},
+        { "Name", "Charms" },
+        { "Listings", new List<Dictionary<string, object>>
+        {
+          new Dictionary<string, object>
+          {
+            { "Key", "UnendingSolveAnimation" },
+            { "Text", "If false, the 3 stage LEDs fade to black once the module is solved as opposed to cycling forever.."}
+          }
+        }}
+      }
+    };
+#pragma warning restore 414
+
+    private class charmsSettings
+    {
+        public bool unendingSolveAnimation = true;
+    }
+    #endregion
+
     private void Awake()
     {
         moduleId = moduleIdCounter++;
+        var modConfig = new modConfig<charmsSettings>("Charms Settings");
+        settings = modConfig.Read();
+        modConfig.Write(settings);
         module.OnActivate += delegate () { audio.PlaySoundAtTransform("start", transform); };
         leftTileRenders = leftTiles.Select(x => x.GetComponent<Renderer>()).ToArray();
         rightTileRenders = rightTiles.Select(x => x.GetComponent<Renderer>()).ToArray();
@@ -162,6 +192,8 @@ public class charms : MonoBehaviour
                         moduleSolved = true;
                         for (int i = 0; i < 7; i++)
                             ColorOrbs(i, castingOrbColors[3]);
+                        if (!settings.unendingSolveAnimation)
+                            StartCoroutine(SolveThenFade());
                     }
                 }
                 else
@@ -495,6 +527,32 @@ public class charms : MonoBehaviour
         }
         for (int i = 0; i < 7; i++)
             hexRenders[i].material.color = lightGray;
+    }
+
+    private IEnumerator SolveThenFade()
+    {
+        yield return new WaitForSeconds(5f);
+        for (int i = 0; i < 3; i++)
+        {
+            StopCoroutine(ledCycleAnimations[i]);
+            ledCycleAnimations[i] = null;
+            lights[i].enabled = false;
+            StartCoroutine(LedOff(i));
+        }
+    }
+
+    private IEnumerator LedOff(int i)
+    {
+        var start = stageLeds[i].material.color;
+        var elapsed = 0f;
+        var duration = 1f;
+        while (elapsed < duration)
+        {
+            stageLeds[i].material.color = Color.Lerp(start, Color.black, elapsed / duration);
+            yield return null;
+            elapsed += Time.deltaTime;
+        }
+        stageLeds[i].material.color = Color.black;
     }
 
     private void PressLed(KMSelectable led)
