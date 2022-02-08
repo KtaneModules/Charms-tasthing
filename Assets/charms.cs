@@ -577,13 +577,13 @@ public class charms : MonoBehaviour
 
     // Twitch Plays
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = "!{0} <left/right> 1 2 3 [Presses those tiles in reading order on the right or left sliding puzzle, any amount can be used] !{0} <left/right> submit [Presses the left or right diamond button] !{0} cast 1 2 3 4 [Casts a spell by starting on hexagon 1 and moving to the rest in order]";
+    private readonly string TwitchHelpMessage = "!{0} <left/right> 1 2 3 [Presses those tiles in reading order on the right or left sliding puzzle, any amount can be used, l and r can be used as shorthands] !{0} <left/right> submit [Presses the left or right diamond button] !{0} cast 1 2 3 4 [Casts a spell by starting on hexagon 1 and moving to the rest in order]";
 #pragma warning restore 414
 
     private IEnumerator ProcessTwitchCommand(string input)
     {
         input = input.Trim().ToLowerInvariant();
-        if (input == "left submit")
+        if (input == "left submit" || input == "l submit")
         {
             if (puzzlesSolved[0])
             {
@@ -593,7 +593,7 @@ public class charms : MonoBehaviour
             yield return null;
             submitButtons[0].OnInteract();
         }
-        else if (input == "right submit")
+        else if (input == "right submit" || input == "r submit")
         {
             if (puzzlesSolved[1])
             {
@@ -603,7 +603,7 @@ public class charms : MonoBehaviour
             yield return null;
             submitButtons[1].OnInteract();
         }
-        else if (input.StartsWith("left ") && input.Substring(5).Split(' ').All(x => "123456".Contains(x)))
+        else if ((input.StartsWith("left ") || input.StartsWith("l ")) && input.Substring(5).Split(' ').All(x => "123456".Contains(x)))
         {
             if (puzzlesSolved[0])
             {
@@ -611,7 +611,7 @@ public class charms : MonoBehaviour
                 yield break;
             }
             yield return null;
-            var numbers = input.Substring(5).Split(' ').ToArray();
+            var numbers = input.Substring(input.StartsWith("right ") ? 5 : 2).Split(' ').ToArray();
             for (int i = 0; i < numbers.Length; i++)
             {
                 var thisTile = leftConfiguration[int.Parse(numbers[i]) - 1];
@@ -627,7 +627,7 @@ public class charms : MonoBehaviour
                 }
             }
         }
-        else if (input.StartsWith("right ") && input.Substring(6).Split(' ').All(x => "123456".Contains(x)))
+        else if ((input.StartsWith("right ") || input.StartsWith("r ")) && input.Substring(6).Split(' ').All(x => "123456".Contains(x)))
         {
             if (puzzlesSolved[1])
             {
@@ -635,7 +635,7 @@ public class charms : MonoBehaviour
                 yield break;
             }
             yield return null;
-            var numbers = input.Substring(6).Split(' ').ToArray();
+            var numbers = input.Substring(input.StartsWith("right ") ? 6 : 2).Split(' ').ToArray();
             for (int i = 0; i < numbers.Length; i++)
             {
                 var thisTile = rightConfiguration[int.Parse(numbers[i]) - 1];
