@@ -603,7 +603,7 @@ public class charms : MonoBehaviour
             yield return null;
             submitButtons[1].OnInteract();
         }
-        else if ((input.StartsWith("left ") || input.StartsWith("l ")) && input.Substring(5).Split(' ').All(x => "123456".Contains(x)))
+        else if ((input.StartsWith("left ") || input.StartsWith("l ")) && input.Substring(input.StartsWith("left ") ? 5 : 2).Split(' ').All(x => "123456".Contains(x)))
         {
             if (puzzlesSolved[0])
             {
@@ -611,7 +611,7 @@ public class charms : MonoBehaviour
                 yield break;
             }
             yield return null;
-            var numbers = input.Substring(input.StartsWith("right ") ? 5 : 2).Split(' ').ToArray();
+            var numbers = input.Substring(input.StartsWith("left ") ? 5 : 2).Split(' ').ToArray();
             for (int i = 0; i < numbers.Length; i++)
             {
                 var thisTile = leftConfiguration[int.Parse(numbers[i]) - 1];
@@ -627,7 +627,7 @@ public class charms : MonoBehaviour
                 }
             }
         }
-        else if ((input.StartsWith("right ") || input.StartsWith("r ")) && input.Substring(6).Split(' ').All(x => "123456".Contains(x)))
+        else if ((input.StartsWith("right ") || input.StartsWith("r ")) && input.Substring(input.StartsWith("right ") ? 6 : 2).Split(' ').All(x => "123456".Contains(x)))
         {
             if (puzzlesSolved[1])
             {
