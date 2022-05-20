@@ -603,7 +603,7 @@ public class charms : MonoBehaviour
             yield return null;
             submitButtons[1].OnInteract();
         }
-        else if ((input.StartsWith("left ") || input.StartsWith("l ")) && input.Substring(input.StartsWith("left ") ? 5 : 2).Split(' ').All(x => "123456".Contains(x)))
+        else if (input.StartsWith("left ") || input.StartsWith("l "))
         {
             if (puzzlesSolved[0])
             {
@@ -611,10 +611,19 @@ public class charms : MonoBehaviour
                 yield break;
             }
             yield return null;
-            var numbers = input.Substring(input.StartsWith("left ") ? 5 : 2).Split(' ').ToArray();
+            var numbers = input.Substring(input.StartsWith("left ") ? 5 : 2);
             for (int i = 0; i < numbers.Length; i++)
             {
-                var thisTile = leftConfiguration[int.Parse(numbers[i]) - 1];
+                var nums = "123456 ".ToCharArray();
+                var ix = Array.IndexOf(nums, numbers[i]);
+                if (ix == 6)
+                    continue;
+                if (ix == -1)
+                {
+                    yield return "sendtochaterror \"" + numbers[i] + "\" is not a valid tile.";
+                    yield break;
+                }
+                var thisTile = leftConfiguration[ix];
                 if (thisTile == null)
                 {
                     yield return "sendtochaterror You cannot press the blank space.";
@@ -623,11 +632,11 @@ public class charms : MonoBehaviour
                 else
                 {
                     yield return new WaitForSeconds(.1f);
-                    leftTiles[(int)leftConfiguration[int.Parse(numbers[i]) - 1]].OnInteract();
+                    leftTiles[(int)leftConfiguration[ix]].OnInteract();
                 }
             }
         }
-        else if ((input.StartsWith("right ") || input.StartsWith("r ")) && input.Substring(input.StartsWith("right ") ? 6 : 2).Split(' ').All(x => "123456".Contains(x)))
+        else if (input.StartsWith("right ") || input.StartsWith("r "))
         {
             if (puzzlesSolved[1])
             {
@@ -635,10 +644,19 @@ public class charms : MonoBehaviour
                 yield break;
             }
             yield return null;
-            var numbers = input.Substring(input.StartsWith("right ") ? 6 : 2).Split(' ').ToArray();
+            var numbers = input.Substring(input.StartsWith("right ") ? 6 : 2);
             for (int i = 0; i < numbers.Length; i++)
             {
-                var thisTile = rightConfiguration[int.Parse(numbers[i]) - 1];
+                var nums = "123456 ".ToCharArray();
+                var ix = Array.IndexOf(nums, numbers[i]);
+                if (ix == 6)
+                    continue;
+                if (ix == -1)
+                {
+                    yield return "sendtochaterror \"" + numbers[i] + "\" is not a valid tile.";
+                    yield break;
+                }
+                var thisTile = rightConfiguration[ix];
                 if (thisTile == null)
                 {
                     yield return "sendtochaterror You cannot press the blank space.";
@@ -647,29 +665,43 @@ public class charms : MonoBehaviour
                 else
                 {
                     yield return new WaitForSeconds(.1f);
-                    rightTiles[(int)rightConfiguration[int.Parse(numbers[i]) - 1]].OnInteract();
+                    rightTiles[(int)rightConfiguration[ix]].OnInteract();
                 }
             }
         }
-        else if (input.StartsWith("cast ") && input.Substring(5).Split(' ').All(x => "1234567".Contains(x)))
+        else if (input.StartsWith("cast "))
         {
+            input = input.Substring(5);
             if (!ableToCast || castingInProgress)
             {
                 yield return "sendtochaterror Hold your horses.";
                 yield break;
             }
-            var numbers = input.Substring(5).Split(' ').Select(x => int.Parse(x) - 1).ToArray();
+            var list = new List<int>();
+            var nums = "1234567 ".ToCharArray();
+            for (int i = 0; i < input.Length; i++)
+            {
+                var ix = Array.IndexOf(nums, input[i]);
+                if (ix == 7)
+                    continue;
+                if (ix == -1)
+                {
+                    yield return "sendtochaterror \"" + input[i] + "\" is not a valid tile.";
+                    yield break;
+                }
+                list.Add(ix);
+            }
             yield return null;
-            for (int i = 0; i < numbers.Length; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 yield return new WaitForSeconds(.1f);
                 if (i == 0)
-                    castingHexagons[numbers[i]].OnInteract();
+                    castingHexagons[list[i]].OnInteract();
                 else
-                    castingHexagons[numbers[i]].OnHighlight();
+                    castingHexagons[list[i]].OnHighlight();
             }
             yield return new WaitForSeconds(.1f);
-            castingHexagons[numbers[0]].OnInteractEnded();
+            castingHexagons[list[0]].OnInteractEnded();
         }
     }
 }
