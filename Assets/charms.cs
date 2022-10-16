@@ -42,8 +42,8 @@ public class charms : MonoBehaviour
 
     private static readonly string[] colorNames = new string[] { "red", "yellow", "green", "blue", "purple" };
     private int[][] adjacencyIndices = new int[6][];
-    private static readonly float[] tileXs = new float[] { -.2449436f, .2449436f };
-    private static readonly float[] tileZs = new float[] { .3253996f, 0f, -.3253996f };
+    private static readonly float[] tileXs = new float[] { -0.2520195f, 0.2520195f };
+    private static readonly float[] tileZs = new float[] { 0.4893236f, 0f, -0.4893236f };
     private static readonly string laCroixTorus = "PYPPPBGGGBPRRGGRRRYBRBRRGRPYYRRBYYGPPYBGRBBYYPBBBGYPPPBGGRRGYPGBBYGGRGYGGBRYPPRYPGRRRYYPPBPYYYPBBBGB";
     private static readonly string[] positionConversions = new string[] { "AGPU38", "DHMX29", "BIQS16", "EJNV07", "CKRWZ4", "FLOTY5" };
     private static readonly string[] spellColors = new string[] { "RR", "RY", "RG", "RB", "RP", "YR", "YY", "YG", "YB", "YP", "GR", "GY", "GG", "GB", "GP", "BR", "BY", "BG", "BB", "BP", "PR", "PY", "PG", "PB", "PP" };
@@ -371,8 +371,8 @@ public class charms : MonoBehaviour
         Debug.LogFormat("[Charms #{0}] Starting right sliding puzzle configuration: {1}.", moduleId, rightConfiguration.Select(x => x == null ? "empty" : colorNames[(int)x]).Join(", "));
         var leftArrowPos = Enumerable.Range(0, 6).Where(x => leftConfiguration[x] != null).PickRandom();
         var rightArrowPos = Enumerable.Range(0, 6).Where(x => rightConfiguration[x] != null).PickRandom();
-        arrows[0].localPosition = new Vector3(tileXs[leftArrowPos % 2], .509f, tileZs[leftArrowPos / 2]);
-        arrows[1].localPosition = new Vector3(tileXs[rightArrowPos % 2], .509f, tileZs[rightArrowPos / 2]);
+        arrows[0].localPosition = new Vector3(tileXs[leftArrowPos % 2], 0.3539161f, tileZs[leftArrowPos / 2]);
+        arrows[1].localPosition = new Vector3(tileXs[rightArrowPos % 2], 0.3539161f, tileZs[rightArrowPos / 2]);
     }
 
     private void PressTile(KMSelectable tile)
